@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><title>Admin Dashboard - 41</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body{background:#f4f6f9}
+.sidebar{width:250px;min-height:100vh;background:#343a40;position:fixed;top:0;left:0;z-index:1000}
+.content{margin-left:250px;padding:20px}
+.sidebar a{color:#c2c7d0;text-decoration:none;display:block;padding:12px 20px;transition:0.2s}
+.sidebar a:hover,.sidebar a.active{background:#4f5962;color:#fff;border-left:4px solid #007bff}
+.stat-card{border-radius:15px;border:0}
+</style>
+</head>
+<body>
+<!-- Sidebar -->
+<div class="sidebar">
+<div class="p-3 text-white fw-bold fs-5 border-bottom"><i class="bi bi-speedometer2"></i> Admin Panel - 41</div>
+<a href="/dashboard" th:classappend="${activePage=='dashboard'}?'active'"><i class="bi bi-house"></i> Dashboard</a>
+<a href="/users" th:classappend="${activePage=='users'}?'active'"><i class="bi bi-people"></i> Users</a>
+<a href="/products" th:classappend="${activePage=='products'}?'active'"><i class="bi bi-box"></i> Products</a>
+<a href="/orders" th:classappend="${activePage=='orders'}?'active'"><i class="bi bi-cart"></i> Orders</a>
+<a href="/analytics" th:classappend="${activePage=='analytics'}?'active'"><i class="bi bi-graph-up"></i> Analytics</a>
+<a href="/settings" th:classappend="${activePage=='settings'}?'active'"><i class="bi bi-gear"></i> Settings</a>
+<div class="p-3 text-muted small mt-5">Project 41/100<br>com.ravi.admin<br>Port 8091<br>Tier 4 - Spring Core</div>
+</div>
+
+<div class="content">
+<nav class="navbar bg-white shadow-sm rounded mb-4">
+<div class="container-fluid">
+<span class="navbar-brand fw-bold">Dashboard Overview - <span th:text="${activePage}" style="text-transform:capitalize"></span></span>
+<span class="badge bg-primary">Project 41 | Admin Dashboard | Ravi Teja</span>
+</div>
+</nav>
+
+<!-- Stats Cards - Show on Dashboard, Users, Orders -->
+<div th:if="${activePage=='dashboard' || activePage=='users' || activePage=='orders'}" class="row g-3 mb-4">
+<div th:each="stat : ${stats}" class="col-md-3">
+<div class="card stat-card shadow-sm">
+<div class="card-body d-flex justify-content-between align-items-center">
+<div><p class="text-muted small mb-1" th:text="${stat.title}"></p><h3 class="fw-bold mb-0" th:text="${stat.value}"></h3></div>
+<div th:class="'bg-'+${stat.color}+' text-white p-3 rounded-circle'"><i th:class="'bi bi-'+${stat.icon}+' fs-4'"></i></div>
+</div>
+<div th:class="'card-footer bg-'+${stat.color}+' bg-opacity-10 small'">+12% from last month</div>
+</div>
+</div>
+</div>
+
+<!-- Dashboard Main -->
+<div th:if="${activePage=='dashboard'}">
+<div class="row g-4">
+<div class="col-md-8">
+<div class="card shadow-sm border-0">
+<div class="card-header bg-white fw-bold">📈 Monthly Sales Report</div>
+<div class="card-body"><canvas id="salesChart" height="120"></canvas></div>
+</div>
+</div>
+<div class="col-md-4">
+<div class="card shadow-sm border-0">
+<div class="card-header bg-white fw-bold">🎯 Quick Stats</div>
+<div class="card-body">
+<div class="d-flex justify-content-between mb-3"><span>Profile Views</span><span class="badge bg-primary">12.5k</span></div>
+<div class="d-flex justify-content-between mb-3"><span>New Users</span><span class="badge bg-success">+245</span></div>
+<div class="d-flex justify-content-between mb-3"><span>Pending Orders</span><span class="badge bg-warning text-dark">18</span></div>
+<div class="d-flex justify-content-between"><span>Support Tickets</span><span class="badge bg-danger">5</span></div>
+<hr><p class="small text-muted">Project 41/100 - Tier 4 - Spring MVC + Thymeleaf + Bootstrap</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Products Page -->
+<div th:if="${activePage=='products'}" class="card shadow-sm border-0">
+<div class="card-header bg-white fw-bold">📦 All Products - 342 Products</div>
+<div class="card-body p-0">
+<table class="table table-hover mb-0">
+<thead class="table-light"><tr><th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Action</th></tr></thead>
+<tbody><tr th:each="p:${productList}"><td th:text="${p.id}"></td><td th:text="${p.name}" class="fw-bold"></td><td><span class="badge bg-info" th:text="${p.category}"></span></td><td th:text="${p.price}" class="fw-bold"></td><td><span class="badge bg-success" th:text="${p.stock}+' in stock'"></span></td><td><button class="btn btn-sm btn-outline-primary">Edit</button></td></tr></tbody>
+</table>
+</div>
+</div>
+
+<!-- Analytics Page -->
+<div th:if="${activePage=='analytics'}" class="row g-4">
+<div class="col-md-8">
+<div class="card shadow-sm border-0">
+<div class="card-header bg-white fw-bold">📊 Analytics - Revenue Growth</div>
+<div class="card-body"><canvas id="analyticsChart" height="120"></canvas></div>
+</div>
+</div>
+<div class="col-md-4">
+<div class="card shadow-sm border-0"><div class="card-header bg-white fw-bold">Traffic Sources</div>
+<div class="card-body"><p>Direct: 45%</p><div class="progress mb-2"><div class="progress-bar bg-primary" style="width:45%"></div></div><p>Search: 30%</p><div class="progress mb-2"><div class="progress-bar bg-success" style="width:30%"></div></div><p>Social: 25%</p><div class="progress"><div class="progress-bar bg-warning" style="width:25%"></div></div></div></div>
+</div>
+</div>
+
+<!-- Settings Page -->
+<div th:if="${activePage=='settings'}" class="card shadow-sm border-0">
+<div class="card-header bg-white fw-bold">⚙️ Settings</div>
+<div class="card-body p-4">
+<div class="row g-3"><div class="col-md-6"><label class="form-label">Site Name</label><input class="form-control" value="E-Cart Admin - 41"></div><div class="col-md-6"><label class="form-label">Admin Email</label><input class="form-control" value="ravi@ecart.com"></div><div class="col-md-6"><label class="form-label">Currency</label><select class="form-select"><option>INR ₹</option><option>USD $</option></select></div><div class="col-md-6"><label class="form-label">Timezone</label><select class="form-select"><option>Asia/Kolkata</option></select></div></div>
+<button class="btn btn-primary mt-4">Save Settings</button>
+<div class="alert alert-success mt-3">Project 41/100 - Admin Dashboard - Tier 4 Completed!</div>
+</div>
+</div>
+
+<!-- Tables Row -->
+<div class="row g-4 mt-1">
+<div class="col-md-6">
+<div class="card shadow-sm border-0">
+<div class="card-header bg-white fw-bold d-flex justify-content-between"><span>👥 Recent Users</span><a href="/users" class="btn btn-sm btn-outline-primary">View All</a></div>
+<div class="card-body p-0">
+<table class="table table-hover mb-0">
+<thead class="table-light"><tr><th>ID</th><th>Name</th><th>Role</th><th>Status</th></tr></thead>
+<tbody><tr th:each="u:${users}"><td th:text="${u.id}"></td><td><span th:text="${u.name}"></span><br><small class="text-muted" th:text="${u.email}"></small></td><td><span class="badge bg-info" th:text="${u.role}"></span></td><td><span class="badge" th:classappend="${u.status=='Active'}?'bg-success':(${u.status=='Pending'}?'bg-warning text-dark':'bg-danger')" th:text="${u.status}"></span></td></tr></tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="col-md-6">
+<div class="card shadow-sm border-0">
+<div class="card-header bg-white fw-bold d-flex justify-content-between"><span>🛒 Recent Orders</span><a href="/orders" class="btn btn-sm btn-outline-primary">View All</a></div>
+<div class="card-body p-0">
+<table class="table table-hover mb-0">
+<thead class="table-light"><tr><th>Order ID</th><th>Product</th><th>Amount</th><th>Status</th></tr></thead>
+<tbody><tr th:each="o:${orders}"><td th:text="${o.id}"></td><td><span th:text="${o.customer}"></span><br><small class="text-muted" th:text="${o.product}"></small></td><td th:text="${o.amount}" class="fw-bold"></td><td><span class="badge" th:classappend="${o.status=='Delivered'}?'bg-success':(${o.status=='Shipped'}?'bg-primary':(${o.status=='Pending'}?'bg-warning text-dark':'bg-info'))" th:text="${o.status}"></span></td></tr></tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+<footer class="text-center text-muted small mt-4">Project 41/100 | Tier 4 - Admin Dashboard | com.ravi.admin | Port 8091</footer>
+</div>
+
+<script>
+const ctx = document.getElementById('salesChart');
+if(ctx){ new Chart(ctx.getContext('2d'), {type:'line',data:{labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'],datasets:[{label:'Sales ₹',data:[2.5,3.8,3.2,5.1,4.9,6.5,7.8,12.4],borderColor:'#007bff',backgroundColor:'rgba(0,123,255,0.1)',fill:true,tension:0.4}]},options:{responsive:true,plugins:{legend:{display:false}}}}); }
+const ctx2 = document.getElementById('analyticsChart');
+if(ctx2){ new Chart(ctx2.getContext('2d'), {type:'bar',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[{label:'Visitors',data:[120,190,300,500,200,300,450],backgroundColor:'#28a745'}]},options:{responsive:true}}); }
+</script>
+</body>
+</html>
