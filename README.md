@@ -211,12 +211,6 @@ Cards and Forms
 
 ---
 
-![demo7](screenshots/demo7.png)
-
----
-
-
-
 # 🎯 Learning Outcomes
 
 - Understanding Spring MVC Architecture using `@Controller`
